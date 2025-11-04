@@ -2,23 +2,23 @@
 use rand::Rng;
 
 
-struct Dense {
-    input_size: usize,
-    output_size: usize,
-    weights: Vec<Vec<f32>>,
-    biases: Vec<f32>,
+pub struct Dense {
+    pub input_size: usize,
+    pub output_size: usize,
+    pub weights: Vec<Vec<f32>>,
+    pub biases: Vec<f32>,
 }
 
 impl Dense {
     // Constructor for Dense layer
-    fn new(input_size : usize, output_size : usize) -> Self {
+    pub fn new(input_size : usize, output_size : usize) -> Self {
         let limit = (6.0 / (input_size + output_size) as f32).sqrt();
         // Initialize weights with random values between -limit and limit; Xavier initialization
-        let rng = rand::thread_rng();
+        let mut rng = rand::thread_rng();
         let mut weights : Vec<Vec<f32>> = Vec::new();
-        for i in 0..output_size {
+        for _ in 0..output_size {
             let mut row : Vec<f32> = Vec::new();
-            for j in 0..input_size {
+            for _ in 0..input_size {
                 let random_value = rng.gen_range(-limit..limit);
                 row.push(random_value);
             }

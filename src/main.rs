@@ -1,4 +1,5 @@
 mod dense;
+mod relu;
 use ndarray::Array2;
 
 fn main() {

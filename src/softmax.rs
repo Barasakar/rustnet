@@ -1,5 +1,4 @@
 use ndarray::{Array2, Axis};
-use std::cmp::max;
 use std::f32;
 
 pub struct Softmax{
@@ -30,5 +29,17 @@ impl Softmax {
         let output = exp_values / sum_col;
         self.cached_output = Some(output.clone());
         output
+    }
+
+    pub fn backward(&self, grad_output: &Array2<f32>) -> Array2<f32> {
+        let cached_output = self.cached_output.as_ref().unwrap();
+
+
+        let mut sum_term = (grad_output * cached_output).sum_axis(Axis(1)); // shape (batch_size, ), scalar 
+        sum_term = sum_term.insert_axis(Axis(1)); // shape (batch_size, 1)
+        let adjusted_gradient = grad_output - &sum_term; // shape (batch_size, input_size)
+        let grad_input = cached_output * &adjusted_gradient; // shape (batch_size, input_size)
+
+        grad_input
     }
 }

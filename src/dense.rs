@@ -45,6 +45,7 @@ impl Dense {
     }
     
     pub fn backward(&mut self, grad_output: &Array2<f32>) -> Array2<f32> {
+        // grad_output here is dL/d_output; meaning how loss changes when output changes. 
         let grad_input = grad_output.dot(&self.weights.t());
         let grad_weights = self.input_cache.as_ref().unwrap().t().dot(grad_output);
         let grad_biases = grad_output.sum_axis(Axis(0));

@@ -1,4 +1,5 @@
 
+// dense.rs
 use rand::Rng;
 use ndarray::{Array1, Array2, Axis, array};
 

@@ -1,3 +1,4 @@
+// loss.rs
 use ndarray::{Array2, Axis};
 
 pub struct MSE{
@@ -29,6 +30,7 @@ pub struct CrossEntropyLoss {
 
 }
 impl CrossEntropyLoss {
+    // Note: this should be used with Softmax activation.
     pub fn new() -> Self {
         CrossEntropyLoss {
 

@@ -1,5 +1,5 @@
 // loss.rs
-use ndarray::{Array2, Axis};
+use ndarray::{Array2};
 
 pub struct MSE{
 
@@ -11,12 +11,12 @@ impl MSE {
 
         }
     }
-    pub fn forward(&self, y_pred: &Array2<f32>, y_true: &Array2<f32>) -> f32 {
+    pub fn mse_forward(&self, y_pred: &Array2<f32>, y_true: &Array2<f32>) -> f32 {
         let loss = ((y_pred - y_true).mapv(|x| x * x)).mean().expect("Cannot compute mean of empty array"); 
         loss
     }
 
-    pub fn backward(&self, y_pred: &Array2<f32>, y_true: &Array2<f32>) -> Array2<f32> {
+    pub fn mse_backward(&self, y_pred: &Array2<f32>, y_true: &Array2<f32>) -> Array2<f32> {
         let n = y_pred.len() as f32;
         let gradient = (2.0 * (y_pred - y_true)) / n;
         return gradient
@@ -37,7 +37,7 @@ impl CrossEntropyLoss {
         }
     }
 
-    pub fn forward(&self, y_pred: &Array2<f32>, y_true: &Array2<f32>) -> f32 {
+    pub fn cel_forward(&self, y_pred: &Array2<f32>, y_true: &Array2<f32>) -> f32 {
         let epsilon = 1e-7;
         let batch_size = y_pred.shape()[0] as f32;
         let clipped = y_pred.mapv(|x| x.max(epsilon)); // avoid the log(0) edge case
@@ -45,7 +45,7 @@ impl CrossEntropyLoss {
         loss
     }
 
-    pub fn backward(&self, y_pred: &Array2<f32>, y_true: &Array2<f32>) -> Array2<f32> {
+    pub fn cel_backward(&self, y_pred: &Array2<f32>, y_true: &Array2<f32>) -> Array2<f32> {
         let gradient = y_pred - y_true;
         gradient
     }

@@ -4,6 +4,7 @@
 use ndarray::Array2;
 use crate::activations::{ReLU, Softmax};
 use crate::dense::{Dense};
+
 use crate::loss::{MSE, CrossEntropyLoss};
 
 
@@ -21,6 +22,7 @@ impl Sequential {
     }
 
     // Using this method requires you to have Box::new(Dense::new(2, 4)) as parameter
+    #[allow(dead_code)]
     pub fn add_layer(&mut self, layer: Box<dyn Layer>) {
         self.layers.push(layer);
     }
@@ -104,3 +106,4 @@ impl Layer for Softmax {
         self.softmax_backward(grad_output)
     }
 }
+

@@ -6,3 +6,4 @@ edition = "2024"
 [dependencies]
 ndarray = "0.15"
 rand = "0.8"
+ndarray-npy = "0.8"

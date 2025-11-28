@@ -1,10 +1,11 @@
 // loss.rs
 use ndarray::{Array2};
 
+#[allow(dead_code)]
 pub struct MSE{
 
 }
-
+#[allow(dead_code)]
 impl MSE {
     pub fn new() -> Self {
         MSE {
@@ -26,9 +27,11 @@ impl MSE {
 
 
 
+#[allow(dead_code)]
 pub struct CrossEntropyLoss {
 
 }
+#[allow(dead_code)]
 impl CrossEntropyLoss {
     // Note: this should be used with Softmax activation.
     pub fn new() -> Self {

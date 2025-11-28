@@ -1,7 +1,10 @@
 
 // dense.rs
 use rand::Rng;
-use ndarray::{Array1, Array2, Axis, array};
+use ndarray::{Array1, Array2, Axis};
+
+#[cfg(test)]
+use ndarray::{array};
 
 pub struct Dense {
     pub input_size: usize,
@@ -63,7 +66,7 @@ impl Dense {
 
 #[cfg(test)]
 mod tests {
-    use crate::dense;
+
 
     use super::*;
     #[test]

@@ -70,7 +70,10 @@ fn main() -> Result<(), Box <dyn std::error::Error>> {
 
     println!("Initializing Model...");
     let mut model = Sequential::new();
-    model.add(Dense::new(28 * 56, 128));
+    model.add(Dense::new(28 * 56, 256));
+    model.add(ReLU::new());
+    model.add(Dense::new(256, 128));
+    model.add(ReLU::new());
     model.add(Dense::new(128, 100));
     model.add(Softmax::new());
     println!("==============Completed==============");
@@ -78,9 +81,9 @@ fn main() -> Result<(), Box <dyn std::error::Error>> {
 
     let batch_size = 64;
     let num_samples = train_labels.shape()[0];
-    let learning_rate = 0.0011;
+    let learning_rate = 0.01;
     println!("Training...");
-    for epoch in 0..10 {
+    for epoch in 0..20 {
         let mut total_loss = 0.0;
         let mut num_batches = 0;
 

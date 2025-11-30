@@ -6,10 +6,12 @@ mod utils;
 
 use std::any::type_name;
 
-use ndarray::{Array2, array,s};
+use ndarray::{Array1, Array2, array,s};
+use ndarray_stats::QuantileExt;
 use activations::{ReLU, Softmax};  // Import both structs
 use sequential::{Sequential};
 use dense::{Dense};
+
 
 use crate::loss::CrossEntropyLoss;
 
@@ -22,6 +24,38 @@ fn train(model: &mut Sequential, batch_images: &Array2<f32>, batch_labels: &Arra
     model.backward(&loss_grad);
     model.update(learning_rate);
     Ok(loss_num)
+}
+
+
+// All-in-one evaluation function that outputs an accuracy.
+fn evaluate(model: &mut Sequential, test_images:& Array2<f32>, test_labels: &Array1<f32>) -> Result< f32, Box<dyn std::error::Error>> {
+    
+    let num_samples = test_labels.shape()[0];
+    let batch_size = 64;
+    let mut accuracy: f32 = 0.0;
+    let mut num_batches = 0;
+    let one_hot_test = utils::create_one_hot(&test_labels, 100)?;
+    num_batches = (num_samples + 1) / batch_size;
+    let mut correct: f32 = 0.0;
+    for batch_idx in 0..num_batches {
+        let start = batch_idx * batch_size;
+        let end = (start + batch_size).min(num_samples);
+        let batch_images = test_images.slice(s![start..end, ..]).to_owned();
+        let batch_labels = one_hot_test.slice(s![start..end, ..]).to_owned();
+        let predictions = model.forward(&batch_images);
+        let actual_batch_size = predictions.shape()[0]; // last batch might have fewer than 64 samples
+        for i in 0..actual_batch_size {
+            let pred_row = predictions.row(i).to_owned();
+            let label_row = batch_labels.row(i).to_owned();
+            let max_pred_index = pred_row.argmax().unwrap();
+            let max_label_index = label_row.argmax().unwrap();
+            if max_label_index == max_pred_index {
+                correct += 1.0;
+            }
+        }
+    }
+    accuracy = correct / num_samples as f32;
+    Ok(accuracy)
 }
 
 fn main() -> Result<(), Box <dyn std::error::Error>> {
@@ -60,9 +94,17 @@ fn main() -> Result<(), Box <dyn std::error::Error>> {
             batch_loss = train(&mut model, &batch_images, &batch_labels, learning_rate)?;
             total_loss += batch_loss;
         }
-        let average_loss = total_loss / batch_size as f32;
+        let average_loss = total_loss / num_batches as f32;
         println!("Epoch {} loss: {}", epoch, average_loss);
     }
+    println!("==============Completed==============");
+
+    println!("Evaluating...");
+    let test_images = utils::read_mnist("/Users/jiayulin/Documents/Personal Projects/Rust/rustnet/dataset/test_images.npy")?;
+    let test_labels = utils::read_npy_1d("/Users/jiayulin/Documents/Personal Projects/Rust/rustnet/dataset/test_labels.npy")?;
+
+    let accuracy = evaluate(&mut model, &test_images, &test_labels)?;
+    println!("Model's final performance is {}", accuracy);
     println!("==============Completed==============");
     Ok(())
 }

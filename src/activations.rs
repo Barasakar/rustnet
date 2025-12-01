@@ -18,7 +18,7 @@ impl ReLU {
         output
     }
     pub fn relu_backward(&self, grad_output: &Array2<f32>) -> Array2<f32> {
-        let cached_output = self.cache_forward.as_ref().unwrap();
+        let cached_output = self.cache_forward.as_ref().expect("BUG: relu_backward potentially called before relu_forward");
         let grad_input = cached_output.mapv(|x| if x > 0.0 {1.0} else {0.0}) * grad_output;
         grad_input
     }
@@ -56,7 +56,7 @@ impl Softmax {
     }
 
     pub fn softmax_backward(&self, grad_output: &Array2<f32>) -> Array2<f32> {
-        let cached_output = self.cached_output.as_ref().unwrap();
+        let cached_output = self.cached_output.as_ref().expect("BUG: softmax_backward potentially called before relu_forward");
 
         let  sum_term = (grad_output * cached_output).sum_axis(Axis(1)); // shape (batch_size, ), scalar 
         let sum_term = sum_term.insert_axis(Axis(1)); // shape (batch_size, 1)

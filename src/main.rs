@@ -47,8 +47,8 @@ fn evaluate(model: &mut Sequential, test_images:& Array2<f32>, test_labels: &Arr
         for i in 0..actual_batch_size {
             let pred_row = predictions.row(i).to_owned();
             let label_row = batch_labels.row(i).to_owned();
-            let max_pred_index = pred_row.argmax().unwrap();
-            let max_label_index = label_row.argmax().unwrap();
+            let max_pred_index = pred_row.argmax().expect("Bug: model predictions is potentially empty");
+            let max_label_index = label_row.argmax().expect("Bug: true labels is potentially empty");
             if max_label_index == max_pred_index {
                 correct += 1.0;
             }
@@ -64,7 +64,7 @@ fn main() -> Result<(), Box <dyn std::error::Error>> {
     println!("Creating Dataset...");
     let mut train_labels = utils::read_npy_1d("/Users/jiayulin/Documents/Personal Projects/Rust/rustnet/dataset/train_labels.npy")?;
     let train_images = utils::read_mnist("/Users/jiayulin/Documents/Personal Projects/Rust/rustnet/dataset/train_images.npy")?;
-    let one_hot_train = utils::create_one_hot(&train_labels, 100).unwrap();
+    let one_hot_train = utils::create_one_hot(&train_labels, 100)?;
     println!("==============Completed==============");
     // Initialize model
 
